@@ -1,48 +1,71 @@
-package com.company;
 import java.util.Scanner;
+
+import java.io.*; 
 import java.util.*;
 
-public class Main {
+public class Question4{
 
-    public static void main(String[] args) {
-	   // write your code here
-        // Creating Scanner Object
-        Scanner scanner = new Scanner(System.in); 
+	static boolean areAnagram(char  s1 [], char s2[])
+	{	
+		// assuming all characters lie in this range
+		int count[] = new int[256];
+
+		for (int i = 0; i < s1.length && i < s2.length;  i++) 
+		{ 
+            count[s1[i]]++; 
+            count[s2[i]]--; 
+        }
+
+        // if arrays are of different lenght, return false
+        if (s1.length != s2.length) 
+        {
+            return false;  
+        }
+
+        // if even one character is non zero, then strings are not anagram of each other
+        for(int i = 0; i < 256; i++)
+        {
+        	if(count[i] != 0)
+        	{
+        		return false;
+        	}
+        }
+
+        return true;
+	}
+
+
+	public static void main(String []args)
+	{
+		// Using Scanner for Getting Input from User 
+
+        Scanner input = new Scanner(System.in);
+
+        System.out.print("Enter the first string: ");
+        String s1 = input.nextLine(); 
+
+        System.out.print("Enter the second string: ");
+        String s2 = input.nextLine(); 
+
+        System.out.println();
+
+        char str1[] = s1.toCharArray();
+        char str2[] = s2.toCharArray();
+
+
+
+        boolean ans = areAnagram(str1,str2);
+
+
+        if(ans == true)
+        {
+        	System.out.println("The two strings are anagram of each other."); 
+        }
+        else
+        {
+            System.out.println("The two strings are not anagram of each other.");
+        }
         
-        // Taking string input
-        System.out.print("Enter String 1: ");
-        String s = scanner.next();
-        System.out.print("Enter String 2: ");
-        String r = scanner.next();
 
-        // Checking for anagrams
-        if(s.length()!=r.length()) {
-            System.out.println("The Given Strings are not Anagrams!");
-        }
-        else {
-            char[] temp1 = s.toCharArray();
-            Arrays.sort(temp1);
-            s = new String(temp1);
-
-            char[] temp2 = r.toCharArray();
-            Arrays.sort(temp2);
-            r = new String(temp2);
-
-            boolean same = true;
-            for(int i=0;i<s.length();++i)
-            {
-                if(s.charAt(i) != r.charAt(i))
-                {
-                    same = false;
-                    break;
-                }
-            }
-            if(same){
-                System.out.println("The Given Strings are Anagrams!");
-            }
-            else {
-                System.out.println("The Given Strings are not Anagrams!");
-            }
-        }
-    }
+	}
 }
