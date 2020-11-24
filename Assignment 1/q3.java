@@ -1,194 +1,141 @@
-package com.company;
+import java.util.Scanner;
 import java.util.*;
-import java.lang.*;
-import java.io.*;
 
-public class Main {
-
-    class Edge {
-        int src, dest, weight;
-        Edge()
-        {
-            src = dest = weight = 0;
-        }
-    };
-    public static class destination {
-        int dest, weight;
-        destination()
-        {
-            dest = weight = 0;
-        }
-    };
-
-    int V, E;
-    Edge edge[];
-    static boolean reachable = true;
-
-    Main(int v, int e)
+public class Question3
+{   
+    // class data type for storing information regarding an edge 
+    public static class Edge
     {
-        V = v;
-        E = e;
-        edge = new Edge[e];
-        for (int i = 0; i < e; ++i)
-            edge[i] = new Edge();
+        int source, destination, weight;
     }
 
-    static int BellmanFord(Main graph, int src, int dest)
+
+    // class called graph which has variables as vertices, edges and an array of type edge
+    public static class Graph
     {
-        int V = graph.V, E = graph.E;
+        int V, E;
+        Edge edge[];
+    }
+
+    public static boolean isNegativeCycle(Graph graph, int source, int v1, int v2)
+    {
+        int V = graph.V;
+        int E = graph.E;
         int dist[] = new int[V];
 
-        for (int i = 0; i < V; ++i)
-            dist[i] = Integer.MAX_VALUE;
-        dist[src] = 0;
+        for (int i = 0; i < V; i++)
+            dist[i] = Integer.MAX_VALUE; //Initialize distances from source to all other vertices as INFINTE
+        dist[source] = 0;
 
-        for (int i = 1; i < V; ++i) {
-            for (int j = 0; j < E; ++j) {
-                int u = graph.edge[j].src;
-                int v = graph.edge[j].dest;
+        for (int i = 1; i <= V - 1; i++)
+        {
+            for (int j = 0; j < E; j++)
+            {
+                int u = graph.edge[j].source;
+                int v = graph.edge[j].destination;
                 int weight = graph.edge[j].weight;
                 if (dist[u] != Integer.MAX_VALUE && dist[u] + weight < dist[v])
                     dist[v] = dist[u] + weight;
             }
         }
 
-        for (int j = 0; j < E; ++j) {
-            int u = graph.edge[j].src;
-            int v = graph.edge[j].dest;
-            int weight = graph.edge[j].weight;
-            if (dist[u] != Integer.MAX_VALUE && dist[u] + weight < dist[v]) {
-                System.out.println("Negative cycles Exist");
-                reachable = false;
-                return Integer.MIN_VALUE;
+        for (int i = 0; i < E; i++)
+        {
+            if(v1 == graph.edge[i].source && v2 == graph.edge[i].destination)
+            {
+                int weight = graph.edge[i].weight;
+                if (dist[v1] != Integer.MAX_VALUE && dist[v1] + weight < dist[v2])
+                    return true;
             }
         }
-        return dist[dest];
+        return false;
     }
 
-    void printArr(int dist[], int V)
-    {
-        System.out.println("Vertex Distance from Source");
-        for (int i = 0; i < V; ++i)
-            System.out.println(i + "\t\t" + dist[i]);
-    }
-
-    public static void addEdge(ArrayList<ArrayList<destination> > adj,
-                        int u, int v, int d)
-    {
-        destination obj = new destination();
-        obj.dest = v;
-        obj.weight = d;
-        adj.get(u).add(obj);
-
-        destination obj2 = new destination();
-        obj.dest = u;
-        obj.weight = d;
-        adj.get(v).add(obj2);
-    }
-
-    public static void dfs(ArrayList<ArrayList<destination> > adj, ArrayList<Integer> path,int startVertex, int endVertex, int[] visited, int travelled){
-        visited[startVertex] = 1;
-        path.add(startVertex);
-        // System.out.println(startVertex);
-        if(startVertex == endVertex) {
-            for(int i=0;i<path.size();++i){
-                System.out.print(path.get(i)+" ");
+    private static void Paths(int vertices, int source, int destination, boolean[][] graph, ArrayList<Integer> arr,
+            int distance, boolean[] visited) {
+    	
+        arr.add(source);
+        visited[source] = true;
+        if (source == destination) {
+            System.out.print("\nPath: ");
+            for (Integer integer : arr) {
+                System.out.print(integer + 1 + " ");
             }
-            System.out.println("with a cost of "+travelled);
-
-            int index = path.size()-1;
-            path.remove(index);
-            visited[startVertex] = 0;
+            System.out.println("\nDistance From Source: " + distance);
+            visited[source] = false;
+            arr.remove(arr.size() - 1);
             return;
         }
-        else {
-            for (int i = 0; i < adj.get(startVertex).size(); i++) {
 
-                if (visited[adj.get(startVertex).get(i).dest] == 0) {
-                    dfs(adj, path, adj.get(startVertex).get(i).dest, endVertex, visited, travelled + adj.get(startVertex).get(i).weight);
-                }
+        for (int i = 0; i < vertices; i++) {
+            if (visited[i] == false && graph[source][i]) {
+                Paths(vertices, i, destination, graph, arr, distance + 1, visited);
             }
-            int index = path.size()-1;
-            path.remove(index);
-            visited[startVertex] = 0;
         }
+        visited[source] = false;
+        arr.remove(arr.size() - 1);
     }
 
-    public static void main(String[] args) {
-        // write your code here
 
-        reachable = true;
-
-        Scanner scanner = new Scanner(System.in);
+    public static void main(String []args)
+    {
+        Scanner sc = new Scanner(System.in);
         System.out.print("Enter the number of vertices: ");
-        int v = scanner.nextInt();
-
-        ArrayList<ArrayList<destination> > adj
-                = new ArrayList<ArrayList<destination> >(v);
-
-        for (int i = 0; i < v; i++) {
-            adj.add(new ArrayList<destination>());
-        }
-
+        int V = sc.nextInt();
         System.out.print("Enter the number of edges: ");
-        int e = scanner.nextInt();
+        int E = sc.nextInt();
+        System.out.println();
+        
+        // creatig the graph, given the number of vertices and edges
+        Graph graph = new Graph();
+        graph.V = V;
+        graph.E = E;
+        graph.edge = new Edge[graph.E];
 
-        Main graph = new Main(v, e);
+        for (int i = 0; i < graph.E; i++)
+        {
+            graph.edge[i] = new Edge();
+        }
+        
 
-        for(int i=0;i<e;++i) {
-            int s,ee,d;
-            System.out.print("Enter the starting vertex of the edge: ");
-            s = scanner.nextInt();
-            System.out.print("Enter the ending vertex of the edge: ");
-            ee = scanner.nextInt();
+        //Taking input for the values of Graph
+        for(int i=0; i<E; i++)
+        {
+            System.out.print("Enter the first vertex: ");
+            graph.edge[i].source = sc.nextInt();
+
+            System.out.print("Enter the second vertex: ");
+            graph.edge[i].destination = sc.nextInt();
+
             System.out.print("Enter the weight of the edge: ");
-            d = scanner.nextInt();
+            graph.edge[i].weight = sc.nextInt();
 
-            destination obj = new destination();
-            obj.dest = ee;
-            obj.weight = d;
-            adj.get(s).add(obj);
-
-            destination obj2 = new destination();
-            obj2.dest = s;
-            obj2.weight = d;
-            adj.get(ee).add(obj2);
-
-            graph.edge[i].src = s;
-            graph.edge[i].dest = ee;
-            graph.edge[i].weight = d;
-
+            System.out.println();
         }
 
-//        for(int i=0;i<adj.size();++i) {
-//            for(int j=0;j<adj.get(i).size();++j){
-//                System.out.print(adj.get(i).get(j).dest+" ");
-//            }
-//            System.out.println();
-//        }
 
-        System.out.println("Let's check between two nodes: ");
-        System.out.print("Enter the starting vertex to start with: ");
-        int startVertex = scanner.nextInt();
-        System.out.print("Enter the ending vertex to end with: ");
-        int endVertex = scanner.nextInt();
+        // vetices should be numbered from 1 to n
+        // not 0 to n-1
+        System.out.print("Enter the source node: ");
+        int source = sc.nextInt();
+        System.out.print("Enter the destination node: ");
+        int dest = sc.nextInt();
 
-        int distance = BellmanFord(graph, startVertex, endVertex);
+        System.out.println();
 
-        if(distance == Integer.MAX_VALUE){
-            System.out.println("Negative cycles Exist");
-            return;
+        if(isNegativeCycle(graph, 0, source, dest))
+            System.out.println("Negative Cycle Exists");
+        else
+        {   
+            // a boolean array to maintain a list of all the vertices that have been visited
+            boolean[] visited = new boolean[V];
+            ArrayList<Integer> pathList = new ArrayList<>();
+            boolean[][] g = new boolean[V][V];
+            for (Edge e : graph.edge) {
+                g[e.source-1][e.destination-1] = true;
         }
-
-        if(reachable == true) {
-            System.out.println("Minimum Distance between source and destination: " + distance);
-
-            System.out.println("All the paths from source to destination: ");
-
-            ArrayList<Integer> path = new ArrayList<Integer>();
-            int[] visited = new int[v];
-            dfs(adj, path,startVertex,endVertex, visited, 0);
+            // printAllPaths(graph, v1, v2, isVisited, pathList);
+            Paths(V, source-1, dest-1, g, pathList, 0, visited);
         }
-
     }
 }
