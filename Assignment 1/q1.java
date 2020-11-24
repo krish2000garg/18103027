@@ -1,81 +1,84 @@
-package com.company;
-import java.util.Scanner;
 import java.util.*;
+import java.io.*;
 
-public class Main {
 
-    public static boolean next_permutation(char[] substr,int n) {
+public class Question1{
 
-        int ind = -1;
-        for(int i=n-2;i>=0;--i) {
-            if(substr[i] < substr[i+1])
-            {
-                ind = i;
-                break;
-            }
-        }
-        if(ind==-1) return false;
+	static int count(char text[], char patt[], int n, int m)
+	{	
+		// to maintain the number of anagrams
+		int count = 0;
 
-        int start=ind+1, last = n-1;
-        while(start < last) {
-            char temp = substr[start];
-            substr[start] = substr[last];
-            substr[last] = temp;
-            last--;
-            start++;
-        }
+		// i goes from 0 to n - m 
+		for(int i = 0; i <= (n-m); i++)
+		{
+			// is used if string mismatch occurs
+			int flag = 0;
 
-        for(int i=ind+1;i<n;++i)
-        {
-            if(substr[ind]<substr[i])
-            {
-                char temp = substr[ind];
-                substr[ind] = substr[i];
-                substr[i] = temp;
-                break;
-            }
-        }
-        return true;
-    }
+			// everytime we create a temporay array of size m and fill it with values from text and then sort it
+			char temp[] = new char[m];
 
-    public static int substringSearch(String mainstr,char[] substr,int n) {
+			for(int j = i, k = 0; j < i + m && k < m; j++, k++)
+			{
+				temp[k] = text[j];
+			}
 
-        int ans=0;
-        for(int i=0;i<mainstr.length()-n+1;++i)
-        {
-            boolean included = true;
-            for(int j=0;j<n;++j) {
-                if(mainstr.charAt(i+j) != substr[j]) {
-                    included = false;
-                    break;
-                }
-            }
-            if(included) ans++;
-        }
-        return ans;
-    }
+			//sorting temp
+			Arrays.sort(temp,0,m);
 
-    public static void main(String[] args) {
-        // write your code here
-        Scanner scanner = new Scanner(System.in);
+			//comparing the strings
+			for(int j = 0; j < m; j++)
+			{
+				if(temp[j] != patt[j])
+				{	// if false, set flag to 1
+					flag = 1;
+					break;
+				}
+			}
 
-        System.out.print("Enter the String: ");
-        String mainstr = scanner.next();
-        System.out.print("Enter the Sub-String: ");
-        String substring = scanner.next();
-        int len = substring.length();
+			// only if flag = 0, increase the count
+			if(flag == 0)
+			{
+				count +=1;
+			}
 
-        char[] substr = substring.toCharArray();
-        Arrays.sort(substr);
+		}
 
-        int ans = 0;
 
-        do {
+		return count;
 
-            ans += substringSearch(mainstr,substr,len);
+	}
 
-        } while(next_permutation(substr,len));
+	public static void main(String[] args) 
+	{
+		
+		// Using Scanner for Getting Input from User 
 
-        System.out.println("The substring exists "+ans+" number of times in the main string.");
-    }
+        Scanner input = new Scanner(System.in);
+
+        System.out.print("Enter the string: ");
+        String text = input.nextLine(); 
+        int n = text.length();
+
+        System.out.print("Enter the substring: ");
+        String patt = input.nextLine(); 
+        int m = patt.length();
+
+
+        System.out.println();
+
+        char t[] = text.toCharArray();
+        char p[] = patt.toCharArray();
+
+        //sorting the pattern
+        Arrays.sort(p);
+
+        int ans = count(t,p,n,m);
+
+        System.out.println("The number of times the given substring appears in the string is: " + ans);
+
+
+
+
+	}
 }
