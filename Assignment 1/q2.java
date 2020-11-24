@@ -1,59 +1,43 @@
-package com.company;
-import java.util.Scanner;
 import java.util.*;
+import java.io.*;
 
-public class Main {
 
-    public static boolean match(String s, int startIndex, String vectorStr) {
+public class Question2{
 
-        for(int i=0;i<vectorStr.length();++i) {
-            if(s.charAt(i+startIndex) != vectorStr.charAt(i)) {
-                return false;
-            }
-        }
-        return true;
-    }
+	public static void main(String[] args) {
 
-    public static void main(String[] args) {
-	// write your code here
-        Scanner scanner = new Scanner(System.in);
+		System.out.println("Enter the paragraph: ");
 
-        System.out.print("Enter the paragraph and press Enter when done: ");
-        String s = scanner.nextLine();
-        System.out.print("Enter the number of elements in vector: ");
-        int n = scanner.nextInt();
+		Scanner input = new Scanner(System.in);
 
-        String[] vector = new String[n];
+		String paragraph = input.nextLine();
 
-        for(int i=0;i<n;++i)
-        {
-            System.out.print("Enter string number "+ (i+1) + ": ");
-            vector[i]= scanner.next();
-        }
+		System.out.println();
 
-        String finString = new String();
+		String option = "Yes";
 
-        for(int i=0;i<s.length();++i)
-        {
-            boolean included = false;
-            for(int j=0;j<n;++j)
-            {
-                if(match(s,i,vector[j]))
-                {
-                    finString += vector[j].charAt(0);
-                    for(int k=1;k<vector[j].length();++k)
-                    {
-                        finString += '*';
-                        ++i;
-                    }
-                    included = true;
-                    break;
-                }
-            }
-            if(!included) {
-                finString += s.charAt(i);
-            }
-        }
-        System.out.println("The final resultant string is " + finString);
-    }
+		while(option.compareTo("No") != 0 ) 
+		{
+			System.out.print("Add a word to the vector: ");
+			String s1 = input.nextLine();
+
+
+			String replace = String.valueOf(s1.charAt(0));
+
+			for(int i = 0; i < s1.length() - 1; i++)
+			{
+		   		replace = replace + '*';
+			}
+
+			paragraph = paragraph.replaceAll(s1,replace);
+
+			System.out.print("Do you want to add another word (Yes/No):");
+			option = input.nextLine();
+		}
+
+
+
+		System.out.println(paragraph);
+
+	}
 }
